@@ -2,18 +2,21 @@
 title: paperHZ Blog
 SEOTitle: paperHZ的博客 | Your Blog
 header-img: img/home-bg.jpg
-email: lzbhangzhou@gmail.com
+email: huxpro@gmail.com
 description: ""
 keyword: ""
-url: "http://paperhz.github.io"              # your host, for absolute URL
-baseurl: "host/blog"         # for example, '/blog' if your blog hosted on 'host/blog'
+url: "http://huangxuan.me"              # your host, for absolute URL
+baseurl: "/huxblog-boilerplate"         # for example, '/blog' if your blog hosted on 'host/blog'
 
 
 
 # SNS settings
 RSS: false
-zhihu_username:     paperHZ
-github_username:    paperHZ
+weibo_username:     huxpro
+zhihu_username:     huxpro
+github_username:    huxpro
+#twitter_username:  huxpro
+facebook_username:  huxpro
 
 
 
@@ -47,7 +50,7 @@ kramdown:
 #disqus_username: _your_disqus_short_name_
 
 # Duoshuo settings
-duoshuo_username: paperHZblog
+duoshuo_username: huxblog
 # Share component is depend on Comment so we can NOT use share only.
 duoshuo_share: true                     # set to false if you want to use Comment without Sharing
 
@@ -65,7 +68,7 @@ ga_domain: huangxuan.me
 
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
-sidebar-about-description: "认真生活。"
+sidebar-about-description: "写写代码，做做设计，看看产品。世界那么大，多玩玩看看。"
 sidebar-avatar: /img/avatar-hux.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
 
 
@@ -81,5 +84,17 @@ friends: [
     {
         title: "Hux Blog",
         href: "http://huangxuan.me"
+    },{
+        title: "Foo",
+        href: "#"
+    },{
+        title: "Bar",
+        href: "#"
+    },{
+        title: "Example Friends",
+        href: "#"
+    },{
+        title: "It helps SEO",
+        href: "#"
     }
 ]
