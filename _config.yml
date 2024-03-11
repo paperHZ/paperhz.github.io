@@ -69,7 +69,7 @@ netease_comment: false
 
 # Sidebar settings
 sidebar: true # whether or not using Sidebar.
-sidebar-about-description: "热爱生活 <br>  llm team @ vivo"
+sidebar-about-description: "热爱生活 <br>  my team @ myself"
 sidebar-avatar: /img/post-bg-infinity.jpg #https://github.com/Huxpro.png # use absolute URL, seeing it's used in both `/` and `/about/`
 
 # Featured Tags
