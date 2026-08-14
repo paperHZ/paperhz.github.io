@@ -1,0 +1,52 @@
+---
+import { formatDate } from '../lib/content';
+import type { Paper } from '../lib/papers';
+import { paperStatus } from '../lib/papers';
+
+interface Props {
+	papers: Paper[];
+}
+
+const { papers } = Astro.props;
+---
+
+<ol class="paper-list">
+	{
+		papers.map((paper) => (
+			<li class="paper-item">
+				<div class="paper-item__date">
+					<time datetime={paper.data.paperDate.toISOString()}>
+						{formatDate(paper.data.paperDate)}
+					</time>
+					<span class:list={['paper-status', `paper-status--${paper.data.status}`]}>
+						{paperStatus[paper.data.status]}
+					</span>
+				</div>
+				<div class="paper-item__body">
+					<h3>
+						<a href={paper.data.arxivUrl} target="_blank" rel="noreferrer">
+							{paper.data.titleZh ?? paper.data.title}
+						</a>
+					</h3>
+					{paper.data.titleZh && <p class="paper-item__original">{paper.data.title}</p>}
+					<p class="paper-item__summary">{paper.data.summary}</p>
+					<div class="paper-item__meta">
+						<a
+							class="paper-item__arxiv"
+							href={paper.data.arxivUrl}
+							target="_blank"
+							rel="noreferrer"
+						>
+							arXiv ↗
+						</a>
+						<span>{paper.data.organizations.join(' / ')}</span>
+						<span>{paper.data.series}</span>
+						{paper.data.topics.slice(0, 3).map((topic) => (
+							<span>#{topic}</span>
+						))}
+					</div>
+				</div>
+			</li>
+		))
+	}
+</ol>

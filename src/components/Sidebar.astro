@@ -1,16 +1,22 @@
 ---
 import type { Note } from '../lib/content';
 import { buildCategoryTree } from '../lib/content';
+import type { Paper } from '../lib/papers';
 import { knowledgeTaxonomy, siteConfig, withBase } from '../site.config';
 import CategoryTree from './CategoryTree.astro';
+import PaperTree from './PaperTree.astro';
 
 interface Props {
 	notes: Note[];
+	papers: Paper[];
 	activeId?: string;
+	pathname: string;
 }
 
-const { notes, activeId } = Astro.props;
+const { notes, papers, activeId, pathname } = Astro.props;
 const tree = buildCategoryTree(notes, knowledgeTaxonomy);
+const siteTree = tree.filter((node) => node.name === '站点');
+const knowledgeTree = tree.filter((node) => node.name !== '站点');
 ---
 
 <aside class="sidebar" id="site-sidebar" aria-label="文章分类">
@@ -34,17 +40,19 @@ const tree = buildCategoryTree(notes, knowledgeTaxonomy);
 			<circle cx="11" cy="11" r="6.5" />
 			<path d="m16 16 4 4" />
 		</svg>
-		<input type="search" placeholder="查找文章…" autocomplete="off" data-tree-search />
+		<input type="search" placeholder="查找内容…" autocomplete="off" data-tree-search />
 		<kbd>/</kbd>
 	</label>
 
 	<div class="sidebar__label">
 		<span>知识目录</span>
-		<span>{notes.length} 篇</span>
+		<span>{notes.length} 文章 · {papers.length} 论文</span>
 	</div>
 
 	<nav class="sidebar__tree">
-		<CategoryTree nodes={tree} activeId={activeId} />
+		<CategoryTree nodes={knowledgeTree} activeId={activeId} />
+		<PaperTree papers={papers} pathname={pathname} />
+		<CategoryTree nodes={siteTree} activeId={activeId} />
 		<p class="tree-empty" data-tree-empty hidden>没有找到相关文章</p>
 	</nav>
 

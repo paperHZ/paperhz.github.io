@@ -1,0 +1,110 @@
+[
+  {
+    "id": "mistral-mistral-7b",
+    "title": "Mistral 7B",
+    "titleZh": "Mistral 7B",
+    "summary": "以 7B 参数结合分组查询注意力和滑动窗口注意力，在保持高性能的同时降低长序列推理成本。",
+    "paperDate": "2023-10-10",
+    "organizations": ["Mistral"],
+    "series": "开放基座模型路线",
+    "topics": ["基础模型", "GQA", "滑动窗口注意力", "推理效率"],
+    "status": "unread",
+    "arxivUrl": "https://arxiv.org/abs/2310.06825"
+  },
+  {
+    "id": "mistral-mixtral",
+    "title": "Mixtral of Experts",
+    "titleZh": "Mixtral 专家混合模型",
+    "summary": "构建每个 Token 激活两个专家的稀疏 MoE 模型，以 13B 活跃参数获得可与更大稠密模型竞争的能力和吞吐。",
+    "paperDate": "2024-01-08",
+    "organizations": ["Mistral"],
+    "series": "稀疏架构路线",
+    "topics": ["MoE", "稀疏模型", "推理效率", "开放模型"],
+    "status": "unread",
+    "arxivUrl": "https://arxiv.org/abs/2401.04088"
+  },
+  {
+    "id": "mistral-pixtral-12b",
+    "title": "Pixtral 12B",
+    "titleZh": "Pixtral 12B",
+    "summary": "以新视觉编码器和二维旋转位置编码处理原生分辨率图像，在多图对话和视觉推理中保持强文本能力。",
+    "paperDate": "2024-10-09",
+    "organizations": ["Mistral"],
+    "series": "多模态模型路线",
+    "topics": ["视觉语言模型", "多模态", "RoPE-2D", "长上下文"],
+    "status": "unread",
+    "arxivUrl": "https://arxiv.org/abs/2410.07073"
+  },
+  {
+    "id": "mistral-magistral",
+    "title": "Magistral",
+    "titleZh": "Magistral 推理模型",
+    "summary": "介绍 Mistral 首个推理模型系列及自主 RLVR 训练栈，对比纯强化学习、冷启动蒸馏和后续强化学习路线。",
+    "paperDate": "2025-06-12",
+    "organizations": ["Mistral"],
+    "series": "推理模型路线",
+    "topics": ["推理模型", "RLVR", "强化学习", "知识蒸馏"],
+    "status": "unread",
+    "arxivUrl": "https://arxiv.org/abs/2506.10910"
+  },
+  {
+    "id": "mistral-voxtral",
+    "title": "Voxtral",
+    "titleZh": "Voxtral 语音语言模型",
+    "summary": "推出 Mini 与 Small 两种语音文本模型，统一语音转写、翻译、问答和摘要，并支持最长约 40 分钟音频。",
+    "paperDate": "2025-07-17",
+    "organizations": ["Mistral"],
+    "series": "语音模型路线",
+    "topics": ["语音语言模型", "多模态", "语音识别", "语音推理"],
+    "status": "unread",
+    "arxivUrl": "https://arxiv.org/abs/2507.13264"
+  },
+  {
+    "id": "mistral-ministral-3",
+    "title": "Ministral 3",
+    "titleZh": "Ministral 3 高效模型家族",
+    "summary": "通过级联蒸馏和迭代剪枝构建 3B、8B、14B 的基础、指令及推理模型，并原生支持视觉和 256K 上下文。",
+    "paperDate": "2026-01-13",
+    "organizations": ["Mistral"],
+    "series": "高效模型路线",
+    "topics": ["知识蒸馏", "模型剪枝", "视觉语言模型", "边缘部署"],
+    "status": "unread",
+    "arxivUrl": "https://arxiv.org/abs/2601.08584"
+  },
+  {
+    "id": "mistral-voxtral-realtime",
+    "title": "Voxtral Realtime",
+    "titleZh": "Voxtral 实时语音模型",
+    "summary": "以因果音频编码器和延迟条件训练实现原生流式转写，在亚秒延迟下接近离线语音识别质量。",
+    "paperDate": "2026-02-11",
+    "organizations": ["Mistral"],
+    "series": "语音模型路线",
+    "topics": ["流式语音识别", "低延迟", "因果编码器", "推理效率"],
+    "status": "unread",
+    "arxivUrl": "https://arxiv.org/abs/2602.11298"
+  },
+  {
+    "id": "mistral-voxtral-tts",
+    "title": "Voxtral TTS",
+    "titleZh": "Voxtral 文本转语音模型",
+    "summary": "结合自回归语义 Token 生成与声学 Token 流匹配，实现多语言、低延迟和短音频提示驱动的零样本声音克隆。",
+    "paperDate": "2026-03-26",
+    "organizations": ["Mistral"],
+    "series": "语音模型路线",
+    "topics": ["文本转语音", "声音克隆", "流匹配", "多语言"],
+    "status": "unread",
+    "arxivUrl": "https://arxiv.org/abs/2603.25551"
+  },
+  {
+    "id": "mistral-shieldstral",
+    "title": "Shieldstral",
+    "titleZh": "Shieldstral 多模态安全分类器",
+    "summary": "基于 Ministral-3B 构建 3B 参数多模态安全分类器，将文本与图像内容审核统一为自然语言条件下的连续安全评分。",
+    "paperDate": "2026-07-28",
+    "organizations": ["Mistral"],
+    "series": "模型安全",
+    "topics": ["多模态安全", "内容审核", "安全分类器", "小型模型"],
+    "status": "unread",
+    "arxivUrl": "https://arxiv.org/abs/2607.25857"
+  }
+]

@@ -5,6 +5,7 @@ export const siteConfig = {
 	github: 'https://github.com/paperHZ',
 	navigation: [
 		{ label: '时间流', href: '/' },
+		{ label: '论文', href: '/papers/' },
 		{ label: '主题', href: '/topics/' },
 	],
 } as const;

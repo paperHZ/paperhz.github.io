@@ -1,0 +1,74 @@
+---
+import { getCollection } from 'astro:content';
+import PaperList from '../../components/PaperList.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import {
+	getPaperOrganizations,
+	getPaperTopics,
+	sortPapers,
+} from '../../lib/papers';
+import { withBase } from '../../site.config';
+
+const papers = sortPapers(await getCollection('papers', ({ data }) => !data.draft));
+const organizations = getPaperOrganizations(papers);
+const topics = getPaperTopics(papers);
+const recentPapers = papers.slice(0, 30);
+---
+
+<BaseLayout title="论文阅读" description="按机构路线和论文主题整理阅读记录">
+	<header class="page-intro">
+		<p class="eyebrow">Paper reading</p>
+		<h1>论文阅读</h1>
+		<p>论文原文通过 arXiv 阅读；这里仅保存机构路线、主题索引和阅读状态。</p>
+	</header>
+
+	<div class="paper-axis-grid">
+		<section class="paper-axis">
+			<header>
+				<span>01</span>
+				<h2>按机构追踪</h2>
+				<p>沿时间和模型系列观察一家机构的技术演进。</p>
+			</header>
+			<div class="paper-axis__links">
+				{
+					organizations.map((organization) => (
+						<a
+							href={withBase(
+								`/papers/organizations/${encodeURIComponent(organization.name)}/`,
+							)}
+						>
+							<strong>{organization.name}</strong>
+							<span>{organization.count} 篇 →</span>
+						</a>
+					))
+				}
+			</div>
+		</section>
+
+		<section class="paper-axis">
+			<header>
+				<span>02</span>
+				<h2>按主题连接</h2>
+				<p>横向比较不同机构对同一个问题的解法。</p>
+			</header>
+			<div class="paper-topic-cloud">
+				{
+					topics.map((topic) => (
+						<a href={withBase(`/papers/topics/${encodeURIComponent(topic.name)}/`)}>
+							{topic.name}
+							<small>{topic.count}</small>
+						</a>
+					))
+				}
+			</div>
+		</section>
+	</div>
+
+	<section class="paper-section" aria-labelledby="paper-timeline-title">
+		<div class="paper-section__head">
+			<h2 id="paper-timeline-title">最近论文</h2>
+			<span>最近 {recentPapers.length} 篇 · 按 arXiv 日期</span>
+		</div>
+		<PaperList papers={recentPapers} />
+	</section>
+</BaseLayout>

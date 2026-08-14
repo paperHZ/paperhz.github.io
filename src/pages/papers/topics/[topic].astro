@@ -1,0 +1,44 @@
+---
+import { getCollection } from 'astro:content';
+import PaperList from '../../../components/PaperList.astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import type { Paper } from '../../../lib/papers';
+import {
+	getPaperAreas,
+	getPaperTopics,
+	sortPapers,
+} from '../../../lib/papers';
+
+export async function getStaticPaths() {
+	const papers = await getCollection('papers', ({ data }) => !data.draft);
+
+	return getPaperTopics(papers).map((topic) => ({
+		params: { topic: topic.name },
+		props: {
+			topic: topic.name,
+			papers: sortPapers(
+				papers.filter((paper) => getPaperAreas(paper).includes(topic.name)),
+			),
+		},
+	}));
+}
+
+interface Props {
+	topic: string;
+	papers: Paper[];
+}
+
+const { topic, papers } = Astro.props;
+---
+
+<BaseLayout title={`论文主题：${topic}`} description={`与“${topic}”相关的论文阅读记录`}>
+	<header class="page-intro">
+		<p class="eyebrow">Paper topic · {papers.length}</p>
+		<h1>{topic}</h1>
+		<p>聚合不同机构在这一方向上的论文，按 arXiv 发表日期从近到远排列。</p>
+	</header>
+
+	<section class="paper-section">
+		<PaperList papers={papers} />
+	</section>
+</BaseLayout>

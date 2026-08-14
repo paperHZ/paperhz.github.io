@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import Header from '../components/Header.astro';
 import Sidebar from '../components/Sidebar.astro';
 import { sortNotes } from '../lib/content';
+import { sortPapers } from '../lib/papers';
 import { siteConfig, withBase } from '../site.config';
 import '../styles/global.css';
 
@@ -18,6 +19,7 @@ const {
 	activeId,
 } = Astro.props;
 const notes = sortNotes(await getCollection('notes', ({ data }) => !data.draft));
+const papers = sortPapers(await getCollection('papers', ({ data }) => !data.draft));
 const pageTitle = title === siteConfig.title ? title : `${title} · ${siteConfig.title}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
@@ -37,7 +39,12 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 	</head>
 	<body>
 		<div class="site-shell">
-			<Sidebar notes={notes} activeId={activeId} />
+			<Sidebar
+				notes={notes}
+				papers={papers}
+				activeId={activeId}
+				pathname={Astro.url.pathname}
+			/>
 			<div class="page-column">
 				<Header pathname={Astro.url.pathname} />
 				<main class="site-main">

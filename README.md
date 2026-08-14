@@ -52,11 +52,32 @@ zhihu: "https://zhuanlan.zhihu.com/p/..." # 可选
 ```
 
 - `category` 是左侧目录中的唯一层级路径，可以继续增加层级；
-- `topics` 可以有多个，会生成主题页和首页筛选项；
+- `topics` 可以有多个，会生成主题聚合页；
 - `draft: true` 的文章不会参与构建；
 - 有 `zhihu` 时，文章页自动显示知乎跳转按钮。
 
-仓库自带三篇示例文章，确认结构后可以直接替换或删除。
+## 添加论文
+
+在 `src/data/papers/` 对应机构的 JSON 文件中增加一条记录。仓库只保存轻量索引，不保存论文 PDF 或原文：
+
+```json
+{
+  "id": "deepseek-r1",
+  "title": "论文英文标题",
+  "titleZh": "可选的中文标题",
+  "summary": "论文解决的问题",
+  "paperDate": "2025-01-22",
+  "organizations": ["DeepSeek"],
+  "series": "推理模型路线",
+  "topics": ["推理与 Reasoning", "强化学习"],
+  "status": "unread",
+  "arxivUrl": "https://arxiv.org/abs/..."
+}
+```
+
+每篇论文只保存一次元数据，网站会根据 `organizations` 和 `topics` 自动生成机构路线与主题索引，论文标题直接跳转 arXiv。
+
+当前索引包含 DeepSeek、Qwen、Google、OpenAI、Kimi、智谱、Anthropic、Meta 和 Mistral 的 146 篇核心论文。
 
 ## 发布到 GitHub Pages
 
@@ -72,9 +93,10 @@ zhihu: "https://zhuanlan.zhihu.com/p/..." # 可选
 ```text
 src/
 ├── content/notes/       # Markdown 文章
+├── data/papers/         # 按机构拆分的论文 JSON 索引
 ├── components/          # 目录和导航
 ├── layouts/             # 页面外壳
-├── pages/               # 时间流、主题页、文章页
+├── pages/               # 时间流、论文、主题和详情页
 ├── styles/global.css    # 全站视觉样式
 └── site.config.ts       # 个人站点配置
 ```

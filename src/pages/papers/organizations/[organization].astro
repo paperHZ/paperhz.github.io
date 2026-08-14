@@ -1,0 +1,69 @@
+---
+import { getCollection } from 'astro:content';
+import PaperList from '../../../components/PaperList.astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import type { Paper } from '../../../lib/papers';
+import { getPaperOrganizations, sortPapers } from '../../../lib/papers';
+
+export async function getStaticPaths() {
+	const papers = await getCollection('papers', ({ data }) => !data.draft);
+
+	return getPaperOrganizations(papers).map((organization) => ({
+		params: { organization: organization.name },
+		props: {
+			organization: organization.name,
+			papers: sortPapers(
+				papers.filter((paper) =>
+					paper.data.organizations.includes(organization.name),
+				),
+			).reverse(),
+		},
+	}));
+}
+
+interface Props {
+	organization: string;
+	papers: Paper[];
+}
+
+const { organization, papers } = Astro.props;
+const series = new Map<string, Paper[]>();
+
+for (const paper of papers) {
+	const entries = series.get(paper.data.series) ?? [];
+	entries.push(paper);
+	series.set(paper.data.series, entries);
+}
+---
+
+<BaseLayout
+	title={`${organization} 论文路线`}
+	description={`${organization} 发表论文的技术路线与阅读记录`}
+>
+	<header class="page-intro">
+		<p class="eyebrow">Organization · {papers.length} papers</p>
+		<h1>{organization}</h1>
+		<p>按技术系列分组，并在每条路线中按 arXiv 发表日期从早到晚排列。</p>
+	</header>
+
+	<nav class="paper-route-nav" aria-label="技术路线">
+		<span>路线</span>
+		{
+			[...series.keys()].map((name, index) => (
+				<a href={`#series-${index + 1}`}>{name}</a>
+			))
+		}
+	</nav>
+
+	{
+		[...series.entries()].map(([name, entries], index) => (
+			<section class="paper-series" id={`series-${index + 1}`}>
+				<header class="paper-section__head">
+					<h2>{name}</h2>
+					<span>{entries.length} 篇</span>
+				</header>
+				<PaperList papers={entries} />
+			</section>
+		))
+	}
+</BaseLayout>
