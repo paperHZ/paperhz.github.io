@@ -3,7 +3,8 @@ import { defineConfig } from 'astro/config';
 
 const repository = process.env.GITHUB_REPOSITORY?.split('/')[1];
 const owner = process.env.GITHUB_REPOSITORY_OWNER;
-const isUserSite = repository === `${owner}.github.io`;
+const isUserSite =
+	repository?.toLowerCase() === `${owner}.github.io`.toLowerCase();
 
 // GitHub Actions 会自动推断项目站点的子路径；本地开发始终使用根路径。
 const base =
