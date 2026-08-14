@@ -1,0 +1,70 @@
+---
+import { getCollection } from 'astro:content';
+import Header from '../components/Header.astro';
+import Sidebar from '../components/Sidebar.astro';
+import { sortNotes } from '../lib/content';
+import { siteConfig, withBase } from '../site.config';
+import '../styles/global.css';
+
+interface Props {
+	title?: string;
+	description?: string;
+	activeId?: string;
+}
+
+const {
+	title = siteConfig.title,
+	description = siteConfig.description,
+	activeId,
+} = Astro.props;
+const notes = sortNotes(await getCollection('notes', ({ data }) => !data.draft));
+const pageTitle = title === siteConfig.title ? title : `${title} · ${siteConfig.title}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<meta name="description" content={description} />
+		<meta name="theme-color" content="#f7f7f4" />
+		<link rel="canonical" href={canonical} />
+		<link rel="icon" type="image/svg+xml" href={withBase('/favicon.svg')} />
+		<title>{pageTitle}</title>
+		<slot name="head" />
+	</head>
+	<body>
+		<div class="site-shell">
+			<Sidebar notes={notes} activeId={activeId} />
+			<div class="page-column">
+				<Header pathname={Astro.url.pathname} />
+				<main class="site-main">
+					<slot />
+				</main>
+				<footer class="site-footer">
+					<span>© {new Date().getFullYear()} {siteConfig.author}</span>
+					<span>以 Markdown 记录，托管于 GitHub Pages</span>
+				</footer>
+			</div>
+		</div>
+
+		<script>
+			const openButton = document.querySelector<HTMLElement>('[data-sidebar-open]');
+			const closeButtons = document.querySelectorAll<HTMLElement>('[data-sidebar-close]');
+
+			function setSidebar(open: boolean) {
+				document.documentElement.classList.toggle('sidebar-is-open', open);
+			}
+
+			openButton?.addEventListener('click', () => setSidebar(true));
+			closeButtons.forEach((button) =>
+				button.addEventListener('click', () => setSidebar(false)),
+			);
+			document.addEventListener('keydown', (event) => {
+				if (event.key === 'Escape') setSidebar(false);
+			});
+		</script>
+	</body>
+</html>

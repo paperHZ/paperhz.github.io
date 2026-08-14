@@ -1,0 +1,107 @@
+---
+import type { Note } from '../lib/content';
+import { buildCategoryTree } from '../lib/content';
+import { knowledgeTaxonomy, siteConfig, withBase } from '../site.config';
+import CategoryTree from './CategoryTree.astro';
+
+interface Props {
+	notes: Note[];
+	activeId?: string;
+}
+
+const { notes, activeId } = Astro.props;
+const tree = buildCategoryTree(notes, knowledgeTaxonomy);
+---
+
+<aside class="sidebar" id="site-sidebar" aria-label="文章分类">
+	<div class="sidebar__head">
+		<a class="brand" href={withBase('/')}>
+			<span class="brand__mark">P</span>
+			<span>
+				<strong>{siteConfig.title}</strong>
+				<small>PERSONAL LEARNING LOG</small>
+			</span>
+		</a>
+		<button class="sidebar__close" type="button" data-sidebar-close aria-label="关闭目录">
+			<svg aria-hidden="true" viewBox="0 0 24 24">
+				<path d="M6 6 18 18M18 6 6 18" />
+			</svg>
+		</button>
+	</div>
+
+	<label class="tree-search">
+		<svg aria-hidden="true" viewBox="0 0 24 24">
+			<circle cx="11" cy="11" r="6.5" />
+			<path d="m16 16 4 4" />
+		</svg>
+		<input type="search" placeholder="查找文章…" autocomplete="off" data-tree-search />
+		<kbd>/</kbd>
+	</label>
+
+	<div class="sidebar__label">
+		<span>知识目录</span>
+		<span>{notes.length} 篇</span>
+	</div>
+
+	<nav class="sidebar__tree">
+		<CategoryTree nodes={tree} activeId={activeId} />
+		<p class="tree-empty" data-tree-empty hidden>没有找到相关文章</p>
+	</nav>
+
+	<div class="sidebar__foot">
+		<span class="status-dot"></span>
+		<span>持续整理中</span>
+	</div>
+</aside>
+<button class="sidebar-backdrop" type="button" data-sidebar-close aria-label="关闭目录"></button>
+
+<script>
+	const input = document.querySelector<HTMLInputElement>('[data-tree-search]');
+	const notes = [...document.querySelectorAll<HTMLElement>('[data-tree-note]')];
+	const groups = [...document.querySelectorAll<HTMLElement>('[data-tree-group]')].reverse();
+	const empty = document.querySelector<HTMLElement>('[data-tree-empty]');
+
+	function filterTree(query: string) {
+		const normalized = query.trim().toLocaleLowerCase('zh-CN');
+		let visibleCount = 0;
+
+		for (const note of notes) {
+			const isVisible = !normalized || note.dataset.search?.includes(normalized);
+			note.hidden = !isVisible;
+			if (isVisible) visibleCount += 1;
+		}
+
+		for (const group of groups) {
+			const matchesCategory = Boolean(
+				normalized && group.dataset.search?.includes(normalized),
+			);
+			const hasVisibleNote = Boolean(group.querySelector('[data-tree-note]:not([hidden])'));
+			const hasVisibleGroup = Boolean(group.querySelector('[data-tree-group]:not([hidden])'));
+			const isVisible =
+				!normalized || matchesCategory || hasVisibleNote || hasVisibleGroup;
+			group.hidden = !isVisible;
+			if (normalized && isVisible) group.querySelector('details')?.setAttribute('open', '');
+		}
+
+		const visibleGroupCount = groups.filter((group) => !group.hidden).length;
+		if (empty) empty.hidden = visibleCount > 0 || visibleGroupCount > 0;
+	}
+
+	input?.addEventListener('input', () => filterTree(input.value));
+
+	document.addEventListener('keydown', (event) => {
+		const target = event.target as HTMLElement;
+		const isTyping = target.matches('input, textarea, [contenteditable="true"]');
+
+		if (event.key === '/' && !isTyping) {
+			event.preventDefault();
+			input?.focus();
+		}
+
+		if (event.key === 'Escape' && input && document.activeElement === input) {
+			input.value = '';
+			filterTree('');
+			input.blur();
+		}
+	});
+</script>

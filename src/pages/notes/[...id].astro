@@ -1,0 +1,126 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import {
+	formatDate,
+	getReadingMinutes,
+	sortNotes,
+} from '../../lib/content';
+import { siteConfig, withBase } from '../../site.config';
+
+export async function getStaticPaths() {
+	const notes = await getCollection('notes', ({ data }) => !data.draft);
+	return notes.map((entry) => ({
+		params: { id: entry.id },
+		props: { entry },
+	}));
+}
+
+interface Props {
+	entry: CollectionEntry<'notes'>;
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const notes = sortNotes(await getCollection('notes', ({ data }) => !data.draft));
+const currentIndex = notes.findIndex((note) => note.id === entry.id);
+const newer = currentIndex > 0 ? notes[currentIndex - 1] : undefined;
+const older = currentIndex < notes.length - 1 ? notes[currentIndex + 1] : undefined;
+const published = formatDate(entry.data.published);
+const updated = entry.data.updated ? formatDate(entry.data.updated) : undefined;
+---
+
+<BaseLayout
+	title={entry.data.title}
+	description={entry.data.summary}
+	activeId={entry.id}
+>
+	<meta slot="head" property="og:type" content="article" />
+	<meta slot="head" property="og:title" content={entry.data.title} />
+	<meta slot="head" property="og:description" content={entry.data.summary} />
+
+	<nav class="breadcrumbs" aria-label="面包屑">
+		<a href={withBase('/')}>首页</a>
+		{
+			entry.data.category.map((segment) => (
+				<>
+					<svg aria-hidden="true" viewBox="0 0 12 12">
+						<path d="m4.5 2.5 3.5 3.5-3.5 3.5" />
+					</svg>
+					<span>{segment}</span>
+				</>
+			))
+		}
+	</nav>
+
+	<article>
+		<header class="article-header">
+			<p class="eyebrow">Learning note</p>
+			<h1>{entry.data.title}</h1>
+			<p class="article-header__summary">{entry.data.summary}</p>
+			<div class="article-meta">
+				<time datetime={entry.data.published.toISOString()}>发表于 {published}</time>
+				{updated && <><i></i><span>更新于 {updated}</span></>}
+				<i></i>
+				<span>约 {getReadingMinutes(entry)} 分钟阅读</span>
+				<i></i>
+				<span>{siteConfig.author}</span>
+			</div>
+			{
+				entry.data.zhihu && (
+					<div class="article-actions">
+						<a
+							class="zhihu-link"
+							href={entry.data.zhihu}
+							target="_blank"
+							rel="noreferrer"
+						>
+							在知乎阅读
+							<svg aria-hidden="true" viewBox="0 0 16 16">
+								<path d="M6 3h7v7M13 3 5 11M3 6v7h7" />
+							</svg>
+						</a>
+					</div>
+				)
+			}
+		</header>
+
+		<div class="prose">
+			<Content />
+		</div>
+
+		{
+			entry.data.topics.length > 0 && (
+				<div class="article-topics">
+					<span>TOPICS</span>
+					{entry.data.topics.map((topic) => (
+						<a class="topic-chip" href={withBase(`/topics/${encodeURIComponent(topic)}/`)}>
+							{topic}
+						</a>
+					))}
+				</div>
+			)
+		}
+	</article>
+
+	{
+		(newer || older) && (
+			<nav class="article-pagination" aria-label="相邻文章">
+				{newer ? (
+					<a href={withBase(`/notes/${newer.id}/`)}>
+						<span>← 较新一篇</span>
+						<strong>{newer.data.title}</strong>
+					</a>
+				) : (
+					<span />
+				)}
+				{older && (
+					<a href={withBase(`/notes/${older.id}/`)}>
+						<span>较早一篇 →</span>
+						<strong>{older.data.title}</strong>
+					</a>
+				)}
+			</nav>
+		)
+	}
+</BaseLayout>

@@ -1,0 +1,79 @@
+---
+import type { CategoryNode } from '../lib/content';
+import { withBase } from '../site.config';
+
+interface Props {
+	nodes: CategoryNode[];
+	activeId?: string;
+	depth?: number;
+}
+
+const { nodes, activeId, depth = 0 } = Astro.props;
+
+function noteCount(node: CategoryNode): number {
+	return node.notes.length + node.children.reduce((sum, child) => sum + noteCount(child), 0);
+}
+
+function containsActive(node: CategoryNode): boolean {
+	return (
+		node.notes.some((note) => note.id === activeId) ||
+		node.children.some((child) => containsActive(child))
+	);
+}
+---
+
+<ul class:list={['category-tree', { 'category-tree--nested': depth > 0 }]}>
+	{
+		nodes.map((node) => (
+			<li
+				data-tree-group
+				data-search={node.path.join(' ').toLocaleLowerCase('zh-CN')}
+			>
+				{node.children.length === 0 && node.notes.length === 0 ? (
+					<div class="category-leaf">
+						<span aria-hidden="true"></span>
+						<span>{node.name}</span>
+					</div>
+				) : (
+					<details open={depth === 0 || containsActive(node)}>
+						<summary>
+							<svg aria-hidden="true" viewBox="0 0 12 12">
+								<path d="m4.5 2.5 3.5 3.5-3.5 3.5" />
+							</svg>
+							<span>{node.name}</span>
+							<small>{noteCount(node)}</small>
+						</summary>
+						{node.children.length > 0 && (
+							<Astro.self nodes={node.children} activeId={activeId} depth={depth + 1} />
+						)}
+						{node.notes.length > 0 && (
+							<ul class="tree-notes">
+								{node.notes.map((note) => (
+									<li
+										class="tree-note"
+										data-tree-note
+										data-search={[
+											note.data.title,
+											note.data.summary,
+											...note.data.category,
+											...note.data.topics,
+										]
+											.join(' ')
+											.toLocaleLowerCase('zh-CN')}
+									>
+										<a
+											href={withBase(`/notes/${note.id}/`)}
+											aria-current={note.id === activeId ? 'page' : undefined}
+										>
+											{note.data.title}
+										</a>
+									</li>
+								))}
+							</ul>
+						)}
+					</details>
+				)}
+			</li>
+		))
+	}
+</ul>

@@ -1,0 +1,55 @@
+---
+import { siteConfig, withBase } from '../site.config';
+
+interface Props {
+	pathname: string;
+}
+
+const { pathname } = Astro.props;
+---
+
+<header class="topbar">
+	<button
+		class="icon-button topbar__menu"
+		type="button"
+		data-sidebar-open
+		aria-controls="site-sidebar"
+		aria-label="打开目录"
+	>
+		<svg aria-hidden="true" viewBox="0 0 24 24">
+			<path d="M4 7h16M4 12h16M4 17h16" />
+		</svg>
+	</button>
+
+	<a class="topbar__brand" href={withBase('/')}>{siteConfig.title}</a>
+
+	<nav class="topbar__nav" aria-label="主导航">
+		{
+			siteConfig.navigation.map((item) => {
+				const href = withBase(item.href);
+				const isActive =
+					item.href === '/'
+						? pathname === href || pathname === href.replace(/\/$/, '')
+						: pathname.startsWith(href);
+
+				return (
+					<a href={href} aria-current={isActive ? 'page' : undefined}>
+						{item.label}
+					</a>
+				);
+			})
+		}
+	</nav>
+
+	<a
+		class="icon-button"
+		href={siteConfig.github}
+		target="_blank"
+		rel="noreferrer"
+		aria-label="访问 GitHub"
+	>
+		<svg aria-hidden="true" viewBox="0 0 24 24">
+			<path d="M12 2.8a9.5 9.5 0 0 0-3 18.5c.5.1.7-.2.7-.5v-1.9c-2.8.6-3.4-1.2-3.4-1.2-.5-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 0 1.6 1.1 1.6 1.1.9 1.6 2.4 1.1 2.9.8.1-.7.4-1.1.6-1.3-2.2-.3-4.6-1.1-4.6-4.7 0-1 .4-1.9 1-2.6-.1-.3-.4-1.3.1-2.6 0 0 .8-.3 2.6 1a9 9 0 0 1 4.8 0c1.8-1.2 2.6-1 2.6-1 .5 1.3.2 2.3.1 2.6.6.7 1 1.6 1 2.6 0 3.7-2.3 4.5-4.5 4.7.4.3.7.9.7 1.8v2.7c0 .4.2.6.7.5A9.5 9.5 0 0 0 12 2.8Z" />
+		</svg>
+	</a>
+</header>

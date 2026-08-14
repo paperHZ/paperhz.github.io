@@ -1,0 +1,33 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getTopics } from '../../lib/content';
+import { withBase } from '../../site.config';
+
+const notes = await getCollection('notes', ({ data }) => !data.draft);
+const topics = getTopics(notes);
+---
+
+<BaseLayout title="主题">
+	<header class="page-intro">
+		<p class="eyebrow">Topic index</p>
+		<h1>主题索引</h1>
+		<p>分类描述知识放在哪里，主题则连接不同分类下谈论同一件事的文章。</p>
+	</header>
+
+	<div class="topics-grid">
+		{
+			topics.map((topic) => (
+				<a class="topic-card" href={withBase(`/topics/${encodeURIComponent(topic.name)}/`)}>
+					<span>
+						<strong>{topic.name}</strong>
+						<span>{topic.count} 篇记录</span>
+					</span>
+					<svg aria-hidden="true" viewBox="0 0 24 24">
+						<path d="M5 12h14M14 7l5 5-5 5" />
+					</svg>
+				</a>
+			))
+		}
+	</div>
+</BaseLayout>
