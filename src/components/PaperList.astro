@@ -2,6 +2,7 @@
 import { formatDate } from '../lib/content';
 import type { Paper } from '../lib/papers';
 import { paperStatus } from '../lib/papers';
+import { withBase } from '../site.config';
 
 interface Props {
 	papers: Paper[];
@@ -39,6 +40,16 @@ const { papers } = Astro.props;
 						>
 							arXiv ↗
 						</a>
+						{
+							paper.data.noteId && (
+								<a
+									class="paper-item__note"
+									href={withBase(`/notes/${paper.data.noteId}/`)}
+								>
+									中文解读 →
+								</a>
+							)
+						}
 						<span>{paper.data.organizations.join(' / ')}</span>
 						<span>{paper.data.series}</span>
 						{paper.data.topics.slice(0, 3).map((topic) => (

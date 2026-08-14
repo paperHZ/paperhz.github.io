@@ -27,7 +27,8 @@ summary: "用一句话说明这篇文章解决什么问题。"
 published: 2026-08-14
 category:
   - 大模型推理
-  - Attention 与 KV Cache
+  - 推理优化
+  - Attention 执行与 KV Cache
   - PagedAttention
 topics:
   - vLLM

@@ -4,7 +4,8 @@ summary: "不从公式背诵出发，而是把注意力看作一次带权的信�
 published: 2026-08-10
 category:
   - 大模型推理
-  - Attention 与 KV Cache
+  - 模型理论
+  - 注意力机制
   - Attention 基础
 topics:
   - 大模型推理

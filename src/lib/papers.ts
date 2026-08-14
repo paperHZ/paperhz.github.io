@@ -20,6 +20,31 @@ const organizationOrder = [
 	'Mistral',
 ];
 
+export const inferencePaperTopics = [
+	'Attention 与 KV Cache',
+	'解码与生成加速',
+	'量化与模型压缩',
+	'推理服务与系统',
+] as const;
+
+type InferencePaperTopic = (typeof inferencePaperTopics)[number];
+
+const inferenceTopicOverrides: Record<string, readonly InferencePaperTopic[]> = {
+	'openai-generating-long-sequences-with-sparse-transformers': [
+		'Attention 与 KV Cache',
+	],
+	'google-multi-query-attention': ['Attention 与 KV Cache'],
+	'google-speculative-decoding': ['解码与生成加速'],
+	'mistral-mistral-7b': ['Attention 与 KV Cache'],
+	'mistral-ministral-3': ['量化与模型压缩'],
+	'deepseek-v2': ['Attention 与 KV Cache'],
+	'deepseek-native-sparse-attention': ['Attention 与 KV Cache'],
+	'qwen2-5-1m': ['Attention 与 KV Cache'],
+	'kimi-mooncake': ['Attention 与 KV Cache', '推理服务与系统'],
+	'kimi-moba': ['Attention 与 KV Cache'],
+	'kimi-linear': ['Attention 与 KV Cache'],
+};
+
 const paperAreas = [
 	{
 		name: '基础模型与架构',
@@ -80,22 +105,24 @@ const paperAreas = [
 		],
 	},
 	{
-		name: '推理系统与效率',
-		keywords: [
-			'推理优化',
-			'推理效率',
-			'推理加速',
-			'模型效率',
-			'训练效率',
-			'KV Cache',
-			'推测解码',
-			'生成加速',
-			'低延迟',
-			'量化',
-			'模型剪枝',
-			'边缘部署',
-			'硬件协同',
-		],
+		name: '推理优化',
+		keywords: [],
+	},
+	{
+		name: 'Attention 与 KV Cache',
+		keywords: [],
+	},
+	{
+		name: '解码与生成加速',
+		keywords: [],
+	},
+	{
+		name: '量化与模型压缩',
+		keywords: [],
+	},
+	{
+		name: '推理服务与系统',
+		keywords: [],
 	},
 	{
 		name: 'Agent 与工具使用',
@@ -179,6 +206,19 @@ export function getPaperAreas(paper: Paper) {
 		)
 		.map((area) => area.name);
 
+	const explicitInferenceTopics =
+		paper.data.inferenceTopics.length > 0
+			? paper.data.inferenceTopics
+			: (inferenceTopicOverrides[paper.id] ?? []);
+	if (explicitInferenceTopics.length > 0) {
+		matches.push('推理优化', ...explicitInferenceTopics);
+		matches.sort(
+			(a, b) =>
+				paperAreas.findIndex((area) => area.name === a) -
+				paperAreas.findIndex((area) => area.name === b),
+		);
+	}
+
 	return matches.length > 0 ? matches : ['基础模型与架构'];
 }
 
@@ -193,6 +233,7 @@ export function getPaperOrganizations(papers: Paper[]) {
 
 	for (const paper of papers) {
 		for (const organization of paper.data.organizations) {
+			if (!organizationOrder.includes(organization)) continue;
 			counts.set(organization, (counts.get(organization) ?? 0) + 1);
 		}
 	}

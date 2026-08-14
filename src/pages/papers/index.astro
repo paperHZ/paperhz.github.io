@@ -5,6 +5,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import {
 	getPaperOrganizations,
 	getPaperTopics,
+	inferencePaperTopics,
 	sortPapers,
 } from '../../lib/papers';
 import { withBase } from '../../site.config';
@@ -12,6 +13,13 @@ import { withBase } from '../../site.config';
 const papers = sortPapers(await getCollection('papers', ({ data }) => !data.draft));
 const organizations = getPaperOrganizations(papers);
 const topics = getPaperTopics(papers);
+const inferenceTopicNames = ['推理优化', ...inferencePaperTopics];
+const inferenceTopics = topics.filter((topic) =>
+	inferenceTopicNames.includes(topic.name),
+);
+const otherTopics = topics.filter(
+	(topic) => !inferenceTopicNames.includes(topic.name),
+);
 const recentPapers = papers.slice(0, 30);
 ---
 
@@ -51,9 +59,22 @@ const recentPapers = papers.slice(0, 30);
 				<h2>按主题连接</h2>
 				<p>横向比较不同机构对同一个问题的解法。</p>
 			</header>
+			<div class="paper-inference-topics">
+				<strong>推理优化专题</strong>
+				<div class="paper-topic-cloud">
+					{
+						inferenceTopics.map((topic) => (
+							<a href={withBase(`/papers/topics/${encodeURIComponent(topic.name)}/`)}>
+								{topic.name}
+								<small>{topic.count}</small>
+							</a>
+						))
+					}
+				</div>
+			</div>
 			<div class="paper-topic-cloud">
 				{
-					topics.map((topic) => (
+					otherTopics.map((topic) => (
 						<a href={withBase(`/papers/topics/${encodeURIComponent(topic.name)}/`)}>
 							{topic.name}
 							<small>{topic.count}</small>

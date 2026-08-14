@@ -7,7 +7,7 @@ import { withBase } from '../site.config';
 const notes = sortNotes(await getCollection('notes', ({ data }) => !data.draft));
 ---
 
-<BaseLayout>
+<BaseLayout showSidebar={false}>
 	<section aria-label="按时间排列的文章">
 		<ol class="feed">
 			{

@@ -103,9 +103,11 @@
     "paperDate": "2024-04-30",
     "organizations": ["Meta"],
     "series": "架构与效率",
-    "topics": ["多 Token 预测", "训练效率", "推理加速", "代码模型"],
-    "status": "unread",
-    "arxivUrl": "https://arxiv.org/abs/2404.19737"
+    "topics": ["MTP", "多 Token 预测", "训练效率", "推理加速", "代码模型"],
+    "inferenceTopics": ["解码与生成加速"],
+    "status": "done",
+    "arxivUrl": "https://arxiv.org/abs/2404.19737",
+    "noteId": "llm-inference/multi-token-prediction"
   },
   {
     "id": "meta-chameleon",

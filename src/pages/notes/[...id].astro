@@ -21,7 +21,7 @@ interface Props {
 }
 
 const { entry } = Astro.props;
-const { Content } = await render(entry);
+const { Content, headings } = await render(entry);
 const notes = sortNotes(await getCollection('notes', ({ data }) => !data.draft));
 const currentIndex = notes.findIndex((note) => note.id === entry.id);
 const newer = currentIndex > 0 ? notes[currentIndex - 1] : undefined;
@@ -34,6 +34,8 @@ const updated = entry.data.updated ? formatDate(entry.data.updated) : undefined;
 	title={entry.data.title}
 	description={entry.data.summary}
 	activeId={entry.id}
+	articleHeadings={headings}
+	articleBackHref={entry.data.paperId ? '/papers/' : '/topics/'}
 >
 	<meta slot="head" property="og:type" content="article" />
 	<meta slot="head" property="og:title" content={entry.data.title} />

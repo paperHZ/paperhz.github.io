@@ -1,6 +1,10 @@
 ---
 import type { Paper } from '../lib/papers';
-import { getPaperOrganizations, getPaperTopics } from '../lib/papers';
+import {
+	getPaperOrganizations,
+	getPaperTopics,
+	inferencePaperTopics,
+} from '../lib/papers';
 import { withBase } from '../site.config';
 
 interface Props {
@@ -11,17 +15,29 @@ interface Props {
 const { papers, pathname } = Astro.props;
 const organizations = getPaperOrganizations(papers);
 const topics = getPaperTopics(papers);
+const inferenceTopicNames = ['推理优化', ...inferencePaperTopics];
+const inferenceTopics = topics.filter((topic) =>
+	inferenceTopicNames.includes(topic.name),
+);
+const otherTopics = topics.filter(
+	(topic) => !inferenceTopicNames.includes(topic.name),
+);
+const interpretedPapers = papers.filter((paper) => paper.data.noteId);
 const papersRoot = withBase('/papers/');
 const isPapersPath = pathname.startsWith(papersRoot);
 
 function isCurrent(href: string) {
 	return pathname === href || pathname === href.replace(/\/$/, '');
 }
+
+const isPaperNotePath = interpretedPapers.some((paper) =>
+	isCurrent(withBase(`/notes/${paper.data.noteId}/`)),
+);
 ---
 
 <ul class="category-tree paper-tree">
 	<li data-tree-group data-search="论文阅读 paper">
-		<details open={isPapersPath}>
+		<details open={isPapersPath || isPaperNotePath} data-tree-key="papers:root">
 			<summary>
 				<svg aria-hidden="true" viewBox="0 0 12 12">
 					<path d="m4.5 2.5 3.5 3.5-3.5 3.5"></path>
@@ -41,8 +57,51 @@ function isCurrent(href: string) {
 					</a>
 				</li>
 
+				<li data-tree-group data-search="论文解读 阅读笔记 paper note">
+					<details open={isPaperNotePath} data-tree-key="papers:notes">
+						<summary>
+							<svg aria-hidden="true" viewBox="0 0 12 12">
+								<path d="m4.5 2.5 3.5 3.5-3.5 3.5"></path>
+							</svg>
+							<span>论文解读</span>
+							<small>{interpretedPapers.length}</small>
+						</summary>
+						<ul class="tree-notes">
+							{
+								interpretedPapers.map((paper) => {
+									const href = withBase(`/notes/${paper.data.noteId}/`);
+									return (
+										<li
+											class="tree-note"
+											data-tree-note
+											data-search={[
+												paper.data.title,
+												paper.data.titleZh ?? '',
+												...paper.data.topics,
+											]
+												.join(' ')
+												.toLocaleLowerCase('zh-CN')}
+										>
+											<a
+												href={href}
+												aria-current={isCurrent(href) ? 'page' : undefined}
+												title={paper.data.title}
+											>
+												{paper.data.titleZh ?? paper.data.title}
+											</a>
+										</li>
+									);
+								})
+							}
+						</ul>
+					</details>
+				</li>
+
 				<li data-tree-group data-search="论文 按机构 公司 organization">
-					<details open={pathname.includes('/papers/organizations/')}>
+					<details
+						open={pathname.includes('/papers/organizations/')}
+						data-tree-key="papers:organizations"
+					>
 						<summary>
 							<svg aria-hidden="true" viewBox="0 0 12 12">
 								<path d="m4.5 2.5 3.5 3.5-3.5 3.5"></path>
@@ -76,7 +135,10 @@ function isCurrent(href: string) {
 				</li>
 
 				<li data-tree-group data-search="论文 按主题 topic">
-					<details open={pathname.includes('/papers/topics/')}>
+					<details
+						open={pathname.includes('/papers/topics/')}
+						data-tree-key="papers:topics"
+					>
 						<summary>
 							<svg aria-hidden="true" viewBox="0 0 12 12">
 								<path d="m4.5 2.5 3.5 3.5-3.5 3.5"></path>
@@ -85,8 +147,57 @@ function isCurrent(href: string) {
 							<small>{topics.length}</small>
 						</summary>
 						<ul class="tree-notes">
+							<li data-tree-group data-search="推理优化 inference kv cache 解码 量化 服务">
+								<details
+									data-tree-key="papers:topics:inference"
+									open={inferenceTopics.some((topic) =>
+										isCurrent(
+											withBase(
+												`/papers/topics/${encodeURIComponent(topic.name)}/`,
+											),
+										),
+									)}
+								>
+									<summary>
+										<svg aria-hidden="true" viewBox="0 0 12 12">
+											<path d="m4.5 2.5 3.5 3.5-3.5 3.5"></path>
+										</svg>
+										<span>推理优化</span>
+										<small>
+											{topics.find((topic) => topic.name === '推理优化')?.count ?? 0}
+										</small>
+									</summary>
+									<ul class="tree-notes">
+										{
+											inferenceTopics.map((topic) => {
+												const href = withBase(
+													`/papers/topics/${encodeURIComponent(topic.name)}/`,
+												);
+												return (
+													<li
+														class="tree-note"
+														data-tree-note
+														data-search={`${topic.name} 推理优化`.toLocaleLowerCase(
+															'zh-CN',
+														)}
+													>
+														<a
+															href={href}
+															aria-current={isCurrent(href) ? 'page' : undefined}
+														>
+															{topic.name === '推理优化'
+																? `全部推理优化 · ${topic.count}`
+																: `${topic.name} · ${topic.count}`}
+														</a>
+													</li>
+												);
+											})
+										}
+									</ul>
+								</details>
+							</li>
 							{
-								topics.map((topic) => {
+								otherTopics.map((topic) => {
 									const href = withBase(
 										`/papers/topics/${encodeURIComponent(topic.name)}/`,
 									);

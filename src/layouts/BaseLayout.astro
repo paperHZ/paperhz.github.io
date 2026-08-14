@@ -7,16 +7,28 @@ import { sortPapers } from '../lib/papers';
 import { siteConfig, withBase } from '../site.config';
 import '../styles/global.css';
 
+interface ArticleHeading {
+	depth: number;
+	slug: string;
+	text: string;
+}
+
 interface Props {
 	title?: string;
 	description?: string;
 	activeId?: string;
+	showSidebar?: boolean;
+	articleHeadings?: ArticleHeading[];
+	articleBackHref?: string;
 }
 
 const {
 	title = siteConfig.title,
 	description = siteConfig.description,
 	activeId,
+	showSidebar = true,
+	articleHeadings = [],
+	articleBackHref = '/',
 } = Astro.props;
 const notes = sortNotes(await getCollection('notes', ({ data }) => !data.draft));
 const papers = sortPapers(await getCollection('papers', ({ data }) => !data.draft));
@@ -38,15 +50,21 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 		<slot name="head" />
 	</head>
 	<body>
-		<div class="site-shell">
-			<Sidebar
-				notes={notes}
-				papers={papers}
-				activeId={activeId}
-				pathname={Astro.url.pathname}
-			/>
+		<div class:list={['site-shell', { 'site-shell--no-sidebar': !showSidebar }]}>
+			{
+				showSidebar && (
+					<Sidebar
+						notes={notes}
+						papers={papers}
+						activeId={activeId}
+						pathname={Astro.url.pathname}
+						articleHeadings={articleHeadings}
+						articleBackHref={articleBackHref}
+					/>
+				)
+			}
 			<div class="page-column">
-				<Header pathname={Astro.url.pathname} />
+				<Header pathname={Astro.url.pathname} showMenu={showSidebar} />
 				<main class="site-main">
 					<slot />
 				</main>

@@ -3,18 +3,36 @@ import type { Note } from '../lib/content';
 import { buildCategoryTree } from '../lib/content';
 import type { Paper } from '../lib/papers';
 import { knowledgeTaxonomy, siteConfig, withBase } from '../site.config';
+import ArticleToc from './ArticleToc.astro';
 import CategoryTree from './CategoryTree.astro';
 import PaperTree from './PaperTree.astro';
+
+interface ArticleHeading {
+	depth: number;
+	slug: string;
+	text: string;
+}
 
 interface Props {
 	notes: Note[];
 	papers: Paper[];
 	activeId?: string;
 	pathname: string;
+	articleHeadings?: ArticleHeading[];
+	articleBackHref?: string;
 }
 
-const { notes, papers, activeId, pathname } = Astro.props;
-const tree = buildCategoryTree(notes, knowledgeTaxonomy);
+const {
+	notes,
+	papers,
+	activeId,
+	pathname,
+	articleHeadings = [],
+	articleBackHref = '/',
+} = Astro.props;
+const hasArticleToc = articleHeadings.some((heading) => heading.depth === 2);
+const knowledgeNotes = notes.filter((note) => !note.data.paperId);
+const tree = buildCategoryTree(knowledgeNotes, knowledgeTaxonomy);
 const siteTree = tree.filter((node) => node.name === '站点');
 const knowledgeTree = tree.filter((node) => node.name !== '站点');
 ---
@@ -35,30 +53,56 @@ const knowledgeTree = tree.filter((node) => node.name !== '站点');
 		</button>
 	</div>
 
-	<label class="tree-search">
-		<svg aria-hidden="true" viewBox="0 0 24 24">
-			<circle cx="11" cy="11" r="6.5" />
-			<path d="m16 16 4 4" />
-		</svg>
-		<input type="search" placeholder="查找内容…" autocomplete="off" data-tree-search />
-		<kbd>/</kbd>
-	</label>
+	{
+		!hasArticleToc && (
+			<label class="tree-search">
+				<svg aria-hidden="true" viewBox="0 0 24 24">
+					<circle cx="11" cy="11" r="6.5" />
+					<path d="m16 16 4 4" />
+				</svg>
+				<input type="search" placeholder="查找内容…" autocomplete="off" data-tree-search />
+				<kbd>/</kbd>
+			</label>
+		)
+	}
 
 	<div class="sidebar__label">
-		<span>知识目录</span>
-		<span>{notes.length} 文章 · {papers.length} 论文</span>
+		<span>{hasArticleToc ? '本文目录' : '知识目录'}</span>
+		{
+			hasArticleToc ? (
+				<a
+					class="sidebar__back"
+					href={withBase(articleBackHref)}
+					data-sidebar-history-back
+				>
+					返回索引
+				</a>
+			) : (
+				<span>{notes.length} 文章 · {papers.length} 论文</span>
+			)
+		}
 	</div>
 
 	<nav class="sidebar__tree">
-		<CategoryTree nodes={knowledgeTree} activeId={activeId} />
-		<PaperTree papers={papers} pathname={pathname} />
-		<CategoryTree nodes={siteTree} activeId={activeId} />
-		<p class="tree-empty" data-tree-empty hidden>没有找到相关文章</p>
+		{
+			hasArticleToc ? (
+				<ArticleToc headings={articleHeadings} />
+			) : (
+				<>
+					<CategoryTree nodes={knowledgeTree} activeId={activeId} />
+					<PaperTree papers={papers} pathname={pathname} />
+					<CategoryTree nodes={siteTree} activeId={activeId} />
+					<p class="tree-empty" data-tree-empty hidden>
+						没有找到相关文章
+					</p>
+				</>
+			)
+		}
 	</nav>
 
 	<div class="sidebar__foot">
 		<span class="status-dot"></span>
-		<span>持续整理中</span>
+		<span>{hasArticleToc ? '文章阅读' : '持续整理中'}</span>
 	</div>
 </aside>
 <button class="sidebar-backdrop" type="button" data-sidebar-close aria-label="关闭目录"></button>
@@ -68,6 +112,49 @@ const knowledgeTree = tree.filter((node) => node.name !== '站点');
 	const notes = [...document.querySelectorAll<HTMLElement>('[data-tree-note]')];
 	const groups = [...document.querySelectorAll<HTMLElement>('[data-tree-group]')].reverse();
 	const empty = document.querySelector<HTMLElement>('[data-tree-empty]');
+	const treeDetails = [
+		...document.querySelectorAll<HTMLDetailsElement>('details[data-tree-key]'),
+	];
+	const treeStorageKey = 'paperHZ:sidebar-tree-state';
+
+	function saveTreeState() {
+		if (treeDetails.length === 0) return;
+		const state = Object.fromEntries(
+			treeDetails.map((details) => [details.dataset.treeKey, details.open]),
+		);
+		sessionStorage.setItem(treeStorageKey, JSON.stringify(state));
+	}
+
+	if (treeDetails.length > 0) {
+		try {
+			const savedState = JSON.parse(
+				sessionStorage.getItem(treeStorageKey) ?? '{}',
+			) as Record<string, boolean>;
+			treeDetails.forEach((details) => {
+				const key = details.dataset.treeKey;
+				if (key && key in savedState) details.open = savedState[key];
+			});
+		} catch {
+			sessionStorage.removeItem(treeStorageKey);
+		}
+
+		treeDetails.forEach((details) =>
+			details.addEventListener('toggle', saveTreeState),
+		);
+		document
+			.querySelectorAll<HTMLAnchorElement>('.sidebar__tree a')
+			.forEach((link) => link.addEventListener('click', saveTreeState));
+	}
+
+	document
+		.querySelector<HTMLAnchorElement>('[data-sidebar-history-back]')
+		?.addEventListener('click', (event) => {
+			if (!document.referrer) return;
+			const referrer = new URL(document.referrer);
+			if (referrer.origin !== window.location.origin) return;
+			event.preventDefault();
+			window.location.assign(referrer.href);
+		});
 
 	function filterTree(query: string) {
 		const normalized = query.trim().toLocaleLowerCase('zh-CN');

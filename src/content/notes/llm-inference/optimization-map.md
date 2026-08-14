@@ -4,6 +4,7 @@ summary: "从性能指标出发，梳理模型压缩、KV Cache、解码、调�
 published: 2026-08-14
 category:
   - 大模型推理
+  - 推理优化
   - 总览
 topics:
   - 大模型推理

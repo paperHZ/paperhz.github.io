@@ -3,23 +3,28 @@ import { siteConfig, withBase } from '../site.config';
 
 interface Props {
 	pathname: string;
+	showMenu?: boolean;
 }
 
-const { pathname } = Astro.props;
+const { pathname, showMenu = true } = Astro.props;
 ---
 
 <header class="topbar">
-	<button
-		class="icon-button topbar__menu"
-		type="button"
-		data-sidebar-open
-		aria-controls="site-sidebar"
-		aria-label="打开目录"
-	>
-		<svg aria-hidden="true" viewBox="0 0 24 24">
-			<path d="M4 7h16M4 12h16M4 17h16" />
-		</svg>
-	</button>
+	{
+		showMenu && (
+			<button
+				class="icon-button topbar__menu"
+				type="button"
+				data-sidebar-open
+				aria-controls="site-sidebar"
+				aria-label="打开目录"
+			>
+				<svg aria-hidden="true" viewBox="0 0 24 24">
+					<path d="M4 7h16M4 12h16M4 17h16" />
+				</svg>
+			</button>
+		)
+	}
 
 	<a class="topbar__brand" href={withBase('/')}>{siteConfig.title}</a>
 

@@ -16,7 +16,7 @@ export async function getStaticPaths() {
 				papers.filter((paper) =>
 					paper.data.organizations.includes(organization.name),
 				),
-			).reverse(),
+			),
 		},
 	}));
 }
@@ -43,27 +43,79 @@ for (const paper of papers) {
 	<header class="page-intro">
 		<p class="eyebrow">Organization · {papers.length} papers</p>
 		<h1>{organization}</h1>
-		<p>按技术系列分组，并在每条路线中按 arXiv 发表日期从早到晚排列。</p>
+		<p>可按时间查看完整信息流，也可按技术模块追踪路线；两种视图均为最新论文优先。</p>
 	</header>
 
-	<nav class="paper-route-nav" aria-label="技术路线">
-		<span>路线</span>
+	<div class="paper-view-switch" role="tablist" aria-label="论文排列方式">
+		<button
+			type="button"
+			role="tab"
+			aria-selected="true"
+			aria-controls="paper-view-timeline"
+			data-paper-view-trigger="timeline"
+		>
+			按时间
+		</button>
+		<button
+			type="button"
+			role="tab"
+			aria-selected="false"
+			aria-controls="paper-view-series"
+			data-paper-view-trigger="series"
+		>
+			按技术模块
+		</button>
+	</div>
+
+	<div id="paper-view-timeline" role="tabpanel" data-paper-view="timeline">
+		<section class="paper-section paper-section--first">
+			<header class="paper-section__head">
+				<h2>论文时间线</h2>
+				<span>NEW → OLD</span>
+			</header>
+			<PaperList papers={papers} />
+		</section>
+	</div>
+
+	<div id="paper-view-series" role="tabpanel" data-paper-view="series" hidden>
+		<nav class="paper-route-nav" aria-label="技术路线">
+			<span>路线</span>
+			{
+				[...series.keys()].map((name, index) => (
+					<a href={`#series-${index + 1}`}>{name}</a>
+				))
+			}
+		</nav>
+
 		{
-			[...series.keys()].map((name, index) => (
-				<a href={`#series-${index + 1}`}>{name}</a>
+			[...series.entries()].map(([name, entries], index) => (
+				<section class="paper-series" id={`series-${index + 1}`}>
+					<header class="paper-section__head">
+						<h2>{name}</h2>
+						<span>{entries.length} 篇 · NEW → OLD</span>
+					</header>
+					<PaperList papers={entries} />
+				</section>
 			))
 		}
-	</nav>
+	</div>
 
-	{
-		[...series.entries()].map(([name, entries], index) => (
-			<section class="paper-series" id={`series-${index + 1}`}>
-				<header class="paper-section__head">
-					<h2>{name}</h2>
-					<span>{entries.length} 篇</span>
-				</header>
-				<PaperList papers={entries} />
-			</section>
-		))
-	}
+	<script>
+		const triggers = document.querySelectorAll<HTMLButtonElement>(
+			'[data-paper-view-trigger]',
+		);
+		const panels = document.querySelectorAll<HTMLElement>('[data-paper-view]');
+
+		triggers.forEach((trigger) => {
+			trigger.addEventListener('click', () => {
+				const selected = trigger.dataset.paperViewTrigger;
+				triggers.forEach((item) =>
+					item.setAttribute('aria-selected', String(item === trigger)),
+				);
+				panels.forEach((panel) => {
+					panel.hidden = panel.dataset.paperView !== selected;
+				});
+			});
+		});
+	</script>
 </BaseLayout>

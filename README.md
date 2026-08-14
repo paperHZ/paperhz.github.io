@@ -39,7 +39,8 @@ published: 2026-08-14
 updated: 2026-08-15 # 可选
 category:
   - 大模型推理
-  - Attention 与 KV Cache
+  - 推理优化
+  - Attention 执行与 KV Cache
   - PagedAttention
 topics:
   - vLLM
@@ -77,7 +78,7 @@ zhihu: "https://zhuanlan.zhihu.com/p/..." # 可选
 
 每篇论文只保存一次元数据，网站会根据 `organizations` 和 `topics` 自动生成机构路线与主题索引，论文标题直接跳转 arXiv。
 
-当前索引包含 DeepSeek、Qwen、Google、OpenAI、Kimi、智谱、Anthropic、Meta 和 Mistral 的 146 篇核心论文。
+当前索引包含九家主要大模型机构及推理系统研究社区的 181 篇核心论文，其中 35 篇按显式标签归入推理优化专题。
 
 ## 发布到 GitHub Pages
 
