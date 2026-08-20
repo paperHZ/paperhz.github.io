@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-import PaperList from '../../../components/PaperList.astro';
+import PaperTable from '../../../components/PaperTable.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import type { Paper } from '../../../lib/papers';
 import {
@@ -31,7 +31,11 @@ interface Props {
 const { topic, papers } = Astro.props;
 ---
 
-<BaseLayout title={`论文主题：${topic}`} description={`与“${topic}”相关的论文阅读记录`}>
+<BaseLayout
+	title={`论文主题：${topic}`}
+	description={`与“${topic}”相关的论文阅读记录`}
+	wide
+>
 	<header class="page-intro">
 		<p class="eyebrow">Paper topic · {papers.length}</p>
 		<h1>{topic}</h1>
@@ -39,6 +43,6 @@ const { topic, papers } = Astro.props;
 	</header>
 
 	<section class="paper-section">
-		<PaperList papers={papers} />
+		<PaperTable papers={papers} mode="topic" />
 	</section>
 </BaseLayout>

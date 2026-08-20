@@ -21,6 +21,7 @@ const organizationOrder = [
 ];
 
 export const inferencePaperTopics = [
+	'投机解码',
 	'Attention 与 KV Cache',
 	'解码与生成加速',
 	'量化与模型压缩',
@@ -44,6 +45,26 @@ const inferenceTopicOverrides: Record<string, readonly InferencePaperTopic[]> = 
 	'kimi-moba': ['Attention 与 KV Cache'],
 	'kimi-linear': ['Attention 与 KV Cache'],
 };
+
+const speculativeDecodingPaperIds = new Set([
+	'google-speculative-decoding',
+	'meta-multi-token-prediction',
+	'inference-blockwise-parallel-decoding',
+	'inference-speculative-sampling',
+	'inference-draft-and-verify',
+	'inference-medusa',
+	'inference-eagle',
+	'inference-lookahead-decoding',
+	'inference-eagle-2',
+	'inference-eagle-3',
+	'inference-specinfer',
+	'inference-rest',
+	'inference-sequoia',
+	'inference-layerskip',
+	'inference-magicdec',
+	'inference-dflash',
+	'inference-dspark',
+]);
 
 const paperAreas = [
 	{
@@ -106,6 +127,10 @@ const paperAreas = [
 	},
 	{
 		name: '推理优化',
+		keywords: [],
+	},
+	{
+		name: '投机解码',
 		keywords: [],
 	},
 	{
@@ -206,10 +231,17 @@ export function getPaperAreas(paper: Paper) {
 		)
 		.map((area) => area.name);
 
-	const explicitInferenceTopics =
-		paper.data.inferenceTopics.length > 0
+	const explicitInferenceTopics: InferencePaperTopic[] = [
+		...(paper.data.inferenceTopics.length > 0
 			? paper.data.inferenceTopics
-			: (inferenceTopicOverrides[paper.id] ?? []);
+			: (inferenceTopicOverrides[paper.id] ?? [])),
+	];
+	if (
+		speculativeDecodingPaperIds.has(paper.id) &&
+		!explicitInferenceTopics.includes('投机解码')
+	) {
+		explicitInferenceTopics.push('投机解码');
+	}
 	if (explicitInferenceTopics.length > 0) {
 		matches.push('推理优化', ...explicitInferenceTopics);
 		matches.sort(

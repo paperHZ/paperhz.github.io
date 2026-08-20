@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import PaperList from '../../../components/PaperList.astro';
+import PaperTable from '../../../components/PaperTable.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import type { Paper } from '../../../lib/papers';
 import { getPaperOrganizations, sortPapers } from '../../../lib/papers';
@@ -39,6 +40,7 @@ for (const paper of papers) {
 <BaseLayout
 	title={`${organization} 论文路线`}
 	description={`${organization} 发表论文的技术路线与阅读记录`}
+	wide
 >
 	<header class="page-intro">
 		<p class="eyebrow">Organization · {papers.length} papers</p>
@@ -73,7 +75,7 @@ for (const paper of papers) {
 				<h2>论文时间线</h2>
 				<span>NEW → OLD</span>
 			</header>
-			<PaperList papers={papers} />
+			<PaperTable papers={papers} />
 		</section>
 	</div>
 

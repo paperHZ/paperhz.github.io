@@ -18,6 +18,7 @@ interface Props {
 	description?: string;
 	activeId?: string;
 	showSidebar?: boolean;
+	wide?: boolean;
 	articleHeadings?: ArticleHeading[];
 	articleBackHref?: string;
 }
@@ -27,6 +28,7 @@ const {
 	description = siteConfig.description,
 	activeId,
 	showSidebar = true,
+	wide = false,
 	articleHeadings = [],
 	articleBackHref = '/',
 } = Astro.props;
@@ -65,7 +67,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 			}
 			<div class="page-column">
 				<Header pathname={Astro.url.pathname} showMenu={showSidebar} />
-				<main class="site-main">
+				<main class:list={['site-main', { 'site-main--wide': wide }]}>
 					<slot />
 				</main>
 				<footer class="site-footer">

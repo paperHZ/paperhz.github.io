@@ -1,0 +1,88 @@
+---
+import { formatDate } from '../lib/content';
+import type { Paper } from '../lib/papers';
+import { paperStatus } from '../lib/papers';
+import { withBase } from '../site.config';
+
+interface Props {
+	papers: Paper[];
+	mode?: 'organization' | 'topic';
+}
+
+const { papers, mode = 'organization' } = Astro.props;
+const isTopicMode = mode === 'topic';
+---
+
+<div class="paper-table-wrap">
+	<table class:list={['paper-table', { 'paper-table--with-summary': isTopicMode }]}>
+		<thead>
+			<tr>
+				<th class="paper-table__col-date">日期</th>
+				<th class="paper-table__col-title">论文</th>
+				{isTopicMode && <th class="paper-table__col-summary">简介</th>}
+				<th class="paper-table__col-context">
+					{isTopicMode ? '机构' : '技术路线'}
+				</th>
+				<th class="paper-table__col-topics">标签</th>
+				<th class="paper-table__col-status">状态</th>
+				<th class="paper-table__col-actions">链接</th>
+			</tr>
+		</thead>
+		<tbody>
+			{
+				papers.map((paper) => (
+					<tr>
+						<td data-label="日期" class="paper-table__col-date">
+							<time datetime={paper.data.paperDate.toISOString()}>
+								{formatDate(paper.data.paperDate)}
+							</time>
+						</td>
+						<td
+							data-label="论文"
+							class="paper-table__title paper-table__col-title"
+						>
+							<a href={paper.data.arxivUrl} target="_blank" rel="noreferrer">
+								<strong>{paper.data.titleZh ?? paper.data.title}</strong>
+								{paper.data.titleZh && <small>{paper.data.title}</small>}
+							</a>
+						</td>
+						{isTopicMode && (
+							<td data-label="简介" class="paper-table__summary paper-table__col-summary">
+								{paper.data.summary}
+							</td>
+						)}
+						<td
+							data-label={isTopicMode ? '机构' : '技术路线'}
+							class="paper-table__col-context"
+						>
+							{isTopicMode ? paper.data.organizations.join(' / ') : paper.data.series}
+						</td>
+						<td
+							data-label="标签"
+							class="paper-table__topics paper-table__col-topics"
+						>
+							{paper.data.topics.slice(0, 3).map((topic) => (
+								<span>{topic}</span>
+							))}
+						</td>
+						<td data-label="状态" class="paper-table__col-status">
+							<span class:list={['paper-status', `paper-status--${paper.data.status}`]}>
+								{paperStatus[paper.data.status]}
+							</span>
+						</td>
+						<td data-label="链接" class="paper-table__col-actions">
+							<div class="paper-table__actions">
+								<a href={paper.data.arxivUrl} target="_blank" rel="noreferrer">
+									arXiv ↗
+								</a>
+								{paper.data.noteId && (
+									<a href={withBase(`/notes/${paper.data.noteId}/`)}>解读 →</a>
+								)}
+							</div>
+						</td>
+					</tr>
+				))
+			}
+		</tbody>
+	</table>
+</div>

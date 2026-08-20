@@ -53,6 +53,7 @@ const papers = defineCollection({
 		inferenceTopics: z
 			.array(
 				z.enum([
+					'投机解码',
 					'Attention 与 KV Cache',
 					'解码与生成加速',
 					'量化与模型压缩',

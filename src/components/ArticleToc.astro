@@ -10,7 +10,9 @@ interface Props {
 }
 
 const { headings } = Astro.props;
-const visibleHeadings = headings.filter((heading) => heading.depth === 2);
+const visibleHeadings = headings.filter(
+	(heading) => heading.depth >= 2 && heading.depth <= 4,
+);
 ---
 
 {
@@ -18,7 +20,7 @@ const visibleHeadings = headings.filter((heading) => heading.depth === 2);
 		<nav class="sidebar-article-toc" aria-label="本文目录">
 			<ol>
 				{visibleHeadings.map((heading) => (
-					<li>
+					<li class={`sidebar-article-toc__depth-${heading.depth}`}>
 						<a href={`#${heading.slug}`} title={heading.text}>
 							{heading.text}
 						</a>

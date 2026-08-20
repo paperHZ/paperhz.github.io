@@ -202,6 +202,10 @@ export const knowledgeTaxonomy: readonly TaxonomyItem[] = [
 					},
 				],
 			},
+			{
+				name: 'vLLM 框架',
+				children: [{ name: 'vLLM logprobs 说明' }],
+			},
 		],
 	},
 ];
