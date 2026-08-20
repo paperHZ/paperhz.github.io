@@ -2,6 +2,7 @@
 title: "vLLM logprobs 说明"
 summary: "从 Transformer 前向、logits 与 log_softmax 数据流解释 vLLM 的 logprobs、prompt_logprobs 和 rank，并复盘 PD 分离下未初始化张量导致的 OverflowError。"
 published: 2026-08-20
+wide: true
 category:
   - 大模型推理
   - vLLM 框架

@@ -24,6 +24,7 @@ const notes = defineCollection({
 		draft: z.boolean().default(false),
 		zhihu: z.url().optional(),
 		paperId: z.string().optional(),
+		wide: z.boolean().default(false),
 	}),
 });
 

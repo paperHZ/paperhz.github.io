@@ -548,6 +548,10 @@ kbd {
 	padding-left: 36px;
 }
 
+.site-main--article-wide {
+	width: min(100%, 1080px);
+}
+
 .site-footer {
 	display: flex;
 	justify-content: space-between;

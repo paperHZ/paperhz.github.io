@@ -34,6 +34,7 @@ const updated = entry.data.updated ? formatDate(entry.data.updated) : undefined;
 	title={entry.data.title}
 	description={entry.data.summary}
 	activeId={entry.id}
+	articleWide={entry.data.wide}
 	articleHeadings={headings}
 	articleBackHref={entry.data.paperId ? '/papers/' : '/topics/'}
 >
