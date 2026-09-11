@@ -1309,12 +1309,14 @@ kbd {
 	stroke-width: 1.6;
 }
 
+/* 正文排版参考微信公众号：稍大的字号、更松的行高和中文字间距。 */
 .prose {
 	padding: 24px 0 20px;
-	color: #292c29;
+	color: #3f3f3f;
 	font-family: var(--sans);
-	font-size: 16px;
-	line-height: 1.72;
+	font-size: 17px;
+	line-height: 1.8;
+	letter-spacing: 0.03em;
 }
 
 .prose > :first-child {
@@ -1332,38 +1334,38 @@ kbd {
 }
 
 .prose h2 {
-	padding-bottom: 0.3em;
-	margin: 1.55em 0 0.65em;
-	font-size: 1.5em;
-	line-height: 1.35;
+	padding-bottom: 0.35em;
+	margin: 1.9em 0 0.8em;
+	font-size: 1.45em;
+	line-height: 1.4;
 	border-bottom: 1px solid var(--line);
 }
 
 .prose h3 {
-	margin: 1.3em 0 0.55em;
-	font-size: 1.28em;
-	line-height: 1.4;
+	margin: 1.6em 0 0.7em;
+	font-size: 1.22em;
+	line-height: 1.45;
 }
 
 .prose h4 {
-	margin: 1.05em 0 0.45em;
-	font-size: 1.08em;
+	margin: 1.35em 0 0.6em;
+	font-size: 1.06em;
 }
 
 .prose p,
 .prose blockquote {
-	margin: 0.88em 0;
+	margin: 1.15em 0;
 }
 
 .prose ul,
 .prose ol {
 	padding-left: 1.5em;
-	margin: 0.6em 0 0.85em;
+	margin: 0.9em 0 1.1em;
 }
 
 .prose li {
-	margin: 0.12em 0;
-	line-height: 1.65;
+	margin: 0.3em 0;
+	line-height: 1.75;
 }
 
 .prose li > ul,
@@ -1386,16 +1388,19 @@ kbd {
 	padding: 1px 0 1px 16px;
 	margin-left: 0;
 	color: var(--ink-soft);
-	line-height: 1.7;
+	line-height: 1.78;
 	border-left: 3px solid #a8bcd6;
 }
 
 .prose table {
+	display: block;
 	width: 100%;
 	margin: 1em 0 1.25em;
+	overflow-x: auto;
 	font-family: var(--sans);
 	font-size: 13px;
 	line-height: 1.55;
+	letter-spacing: 0;
 	border-collapse: collapse;
 }
 
@@ -1420,7 +1425,8 @@ kbd {
 .prose code {
 	padding: 0.12em 0.32em;
 	font-family: var(--mono);
-	font-size: 0.84em;
+	font-size: 0.82em;
+	letter-spacing: 0;
 	background: #ecece7;
 	border: 0;
 	border-radius: 4px;
@@ -1428,10 +1434,11 @@ kbd {
 
 .prose pre {
 	padding: 14px 16px;
-	margin: 1em 0;
+	margin: 1.3em 0;
 	overflow-x: auto;
 	font-size: 13px;
 	line-height: 1.65;
+	letter-spacing: 0;
 	background: #f1f1ed !important;
 	border: 1px solid #d8d9d4;
 	border-radius: 5px;
@@ -1444,38 +1451,11 @@ kbd {
 }
 
 .prose img {
+	display: block;
 	max-width: 100%;
 	height: auto;
+	margin: 0 auto;
 	border: 1px solid var(--line);
-}
-
-.prose table {
-	display: block;
-	width: 100%;
-	margin: 1.8em 0;
-	overflow-x: auto;
-	font-family: var(--sans);
-	font-size: 13px;
-	line-height: 1.7;
-	border-collapse: collapse;
-}
-
-.prose th,
-.prose td {
-	padding: 9px 13px;
-	text-align: left;
-	vertical-align: top;
-	border: 1px solid var(--line);
-}
-
-.prose th {
-	font-weight: 600;
-	white-space: nowrap;
-	background: #efefea;
-}
-
-.prose tbody tr:nth-child(even) td {
-	background: var(--paper-raised);
 }
 
 .prose hr {
@@ -1751,14 +1731,9 @@ kbd {
 	}
 
 	.prose {
-		font-size: 15.5px;
-		line-height: 1.65;
-	}
-
-	.prose table {
-		display: block;
-		max-width: 100%;
-		overflow-x: auto;
+		font-size: 16.5px;
+		line-height: 1.78;
+		letter-spacing: 0.02em;
 	}
 
 	.article-pagination {
